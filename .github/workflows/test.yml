@@ -13,10 +13,8 @@ jobs:
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
       - name: Jest test was started
-      - run: |
-          make install
-      - run: |
-          make link
+      - run: make install
+      - run: make link
       - run: |
           npm test -- --coverage --coverageProvider=v8
       - run: echo "🍏 This job's status is ${{ job.status }}."
