@@ -5,6 +5,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
+      - actions/checkout@v2
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
@@ -14,6 +15,5 @@ jobs:
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
       - name: Jest test was started
       - run: npm i
-      - run: |
-          npm test -- --coverage --coverageProvider=v8
+      - run: npm test -- --coverage --coverageProvider=v8
       - run: echo "🍏 This job's status is ${{ job.status }}."
