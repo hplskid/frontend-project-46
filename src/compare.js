@@ -1,19 +1,27 @@
 import fs from "fs";
 import path from "path";
 import _ from "lodash";
+import parse from './parsers.js'
 
 export default function genDiff(fileOne, fileTwo) {
-  const rawJsonOne = fs.readFileSync(path.resolve(fileOne)).toLocaleString();
-  const parsedJsonOne = JSON.parse(rawJsonOne);
+  try {
+    const rawOne = fs.readFileSync(path.resolve(fileOne), 'utf-8');
+    const rawTwo = fs.readFileSync(path.resolve(fileTwo), 'utf-8');
 
-  const rawJsonTwo = fs.readFileSync(path.resolve(fileTwo)).toLocaleString();
-  const parsedJsonTwo = JSON.parse(rawJsonTwo);
+    const parsedFileOne = parse(rawOne, path.extname(fileOne).slice(1));
+    const parsedFileTwo = parse(rawTwo, path.extname(fileTwo).slice(1));
 
-  const object = compareAndSortJSON(parsedJsonOne, parsedJsonTwo);
+    if (parsedFileOne === undefined || parsedFileTwo === undefined) {
+      return `File ext ${path.extname(fileOne).slice(1)} is not supported yet`
+    }
 
-  const result = iterSortedObject(object, parsedJsonOne, parsedJsonTwo);
+    const object = compareAndSortObject(parsedFileOne, parsedFileTwo);
+    const result = iterSortedObject(object, parsedFileOne, parsedFileTwo);
 
-  return `{\n    ${result.join('\n    ')}\n}`
+    return `{\n    ${result.join('\n    ')}\n}`
+  } catch (exception) {
+    return 'No such file or directory';
+  }
 }
 
 function iterSortedObject(object, inputOne, inputTwo) {
@@ -41,7 +49,7 @@ function iterSortedObject(object, inputOne, inputTwo) {
   return passedObject;
 }
 
-function compareAndSortJSON(obj1, obj2) {
+function compareAndSortObject(obj1, obj2) {
   const keys = {};
 
   Object.keys(obj1).forEach((key) => {
